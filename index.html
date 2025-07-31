@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Ultimate LangChain Course</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Stone & Sky -->
+    <!-- Application Structure Plan: The application uses a two-column, responsive layout. A fixed left sidebar contains hierarchical, collapsible navigation for the course parts and chapters. The main right column dynamically displays the selected chapter's content. This structure was chosen for its excellent scannability and ease of navigation, allowing users to quickly jump between complex topics without losing context, which is superior to a long, single-scroll page. A search bar provides global filtering for targeted information retrieval. -->
+    <!-- Visualization & Content Choices: Course Structure (Text) -> Goal: Organize -> Presentation: Hierarchical Sidebar -> Interaction: Click-to-display -> Justification: Provides a clear, persistent map of the course content. Code Examples (Text) -> Goal: Inform/Educate -> Presentation: Styled Code Blocks -> Interaction: Copy-to-clipboard button -> Justification: Makes code readable and easily reusable for the user. Library: Vanilla JS for copy functionality. Component Deep Dives (Tables) -> Goal: Compare/Inform -> Presentation: Styled HTML Tables -> Interaction: None -> Justification: Tables are the best format for comparing features of different components. Conceptual Flows (e.g., RAG, Agents) -> Goal: Organize/Inform -> Presentation: HTML/Tailwind Diagrams -> Interaction: None -> Justification: Simple diagrams built with divs, borders, and flexbox will visually represent flows without using SVG files, adhering to constraints. Search -> Goal: Organize/Find -> Presentation: Input field -> Interaction: Real-time text highlighting -> Justification: Provides a powerful way to find specific terms across the entire course material. Library: Vanilla JS. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .content-section h2 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #0c4a6e;
+            margin-bottom: -0.5rem;
+        }
+        .content-section h3 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            margin-top: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .content-section h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+        .content-section p, .content-section li {
+            line-height: 1.75;
+            color: #334155;
+        }
+        .content-section ul {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .content-section table {
+            width: 100%;
+            margin-top: 1rem;
+            border-collapse: collapse;
+        }
+        .content-section th, .content-section td {
+            border: 1px solid #d1d5db;
+            padding: 0.75rem;
+            text-align: left;
+        }
+        .content-section th {
+            background-color: #f3f4f6;
+        }
+        .content-section code:not(.block) {
+            background-color: #e5e7eb;
+            padding: 0.125rem 0.25rem;
+            border-radius: 0.25rem;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+        .nav-link.active {
+            background-color: #e0f2fe;
+            color: #0c4a6e;
+            font-weight: 600;
+        }
+        mark {
+            background-color: #fef9c3;
+            padding: 2px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <div class="flex">
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
+            <div class="h-full px-3 py-4 overflow-y-auto bg-white border-r border-slate-200">
+                <h1 class="text-xl font-bold text-sky-900 mb-4 px-2">LangChain Course</h1>
+                <div class="relative mb-4">
+                    <input type="search" id="search-input" placeholder="Search notes..." class="w-full p-2 text-sm border border-slate-300 rounded-lg focus:ring-sky-500 focus:border-sky-500">
+                </div>
+                <ul class="space-y-2 font-medium" id="nav-menu">
+                    <!-- Navigation items will be injected by JS -->
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Mobile Sidebar Toggle -->
+        <button id="sidebar-toggle" class="sm:hidden fixed top-4 left-4 z-50 p-2 text-slate-600 bg-white rounded-md border">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
+
+        <!-- Main Content -->
+        <main class="sm:ml-64 p-4 md:p-8 w-full">
+            <div id="content-container" class="max-w-4xl mx-auto">
+                <!-- Content will be injected by JS -->
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const courseData = [
+            {
+                part: "Part 1: LangChain Fundamentals",
+                chapters: [
+                    { id: "chapter-1", title: "Chapter 1: What is LangChain?" },
+                    { id: "chapter-2", title: "Chapter 2: Your First AI Program (Local LLMs)" },
+                    { id: "chapter-3", title: "Chapter 3: Building with Prompts & Chains (LCEL)" },
+                    { id: "chapter-4", title: "Chapter 4: Giving Your AI a Memory" },
+                ]
+            },
+            {
+                part: "Part 2: Core Applications & Techniques",
+                chapters: [
+                    { id: "chapter-5", title: "Chapter 5: Talking to Your Documents (RAG)" },
+                    { id: "chapter-6", title: "Chapter 6: Structuring AI Outputs (Output Parsers)" },
+                    { id: "chapter-7", title: "Chapter 7: Giving Your AI Tools (Agents)" },
+                ]
+            },
+            {
+                part: "Part 3: The LangChain Ecosystem",
+                chapters: [
+                    { id: "chapter-8", title: "Chapter 8: Debugging and Tracing with LangSmith" },
+                    { id: "chapter-9", title: "Chapter 9: Deploying Your Chain as an API with LangServe" },
+                    { id: "chapter-10", title: "Chapter 10: Building a Simple Web UI with Streamlit" },
+                ]
+            },
+            {
+                part: "Part 4: Advanced Concepts with LangGraph",
+                chapters: [
+                    { id: "chapter-11", title: "Chapter 11: Intro to LangGraph" },
+                    { id: "chapter-12", title: "Chapter 12: State, Nodes, and the Graph" },
+                    { id: "chapter-13", title: "Chapter 13: Edges and Conditional Routing" },
+                    { id: "chapter-14", title: "Chapter 14: Building a Cyclical Agent" },
+                    { id: "chapter-15", title: "Chapter 15: Creating Multi-Agent Systems" },
+                ]
+            },
+            {
+                part: "Conclusion",
+                chapters: [
+                    { id: "chapter-16", title: "Chapter 16: Your Journey as a Developer" },
+                ]
+            }
+        ];
+
+        const content = {
+            "chapter-1": `
+                <section id="chapter-1" class="content-section">
+                    <h2>Part 1: LangChain Fundamentals</h2>
+                    <h3>Chapter 1: What is LangChain?</h3>
+                    <p>At its core, a Large Language Model (LLM) like <code>codellama</code> or Google's Gemini is an incredible reasoning engine. However, on its own, it has some fundamental limitations.</p>
+                    <p>Imagine a brilliant chef who is a master of every cooking technique. Now, imagine this chef is locked in a kitchen with no windows and only a fixed pantry of ingredients from two years ago.</p>
+                    <p>This chef is the LLM. They are brilliant, but they are isolated:</p>
+                    <ul>
+                        <li>They don't know what happened in the world today (no access to live data).</li>
+                        <li>They can't see the special recipe book you brought with you (no access to your private data).</li>
+                        <li>They have no memory of the meal you just discussed a minute ago.</li>
+                        <li>They can't use a calculator or a thermometer (no access to external tools).</li>
+                    </ul>
+                    <p class="font-semibold text-lg my-4">LangChain is the set of keys, tools, and assistants that lets the chef interact with the outside world.</p>
+                    <p>It's a software development framework designed specifically to overcome these limitations. It provides the building blocks to connect LLMs to other sources of computation and data. We use LangChain to build applications that are:</p>
+                    <ol class="list-decimal pl-5 space-y-2">
+                        <li><strong>Data-aware</strong>: They can connect to private, specific data sources (like your PDFs or company documents) and answer questions based on them. This is a technique called <strong>Retrieval-Augmented Generation (RAG)</strong>.</li>
+                        <li><strong>Agentic</strong>: They can interact with their environment. An LLM can be given "tools" (like a calculator, a search engine, or another piece of code) and can reason about which tool to use to accomplish a goal.</li>
+                        <li><strong>Stateful</strong>: They can remember past interactions, allowing for coherent, multi-turn conversations.</li>
+                    </ol>
+                    <p class="mt-4">In short, LangChain is the bridge from a raw, isolated LLM to a powerful, useful, and integrated AI application. It provides the structure for the "chains" of logic that make these complex applications possible.</p>
+                </section>
+            `,
+            "chapter-2": `
+                <section id="chapter-2" class="content-section">
+                    <h2>Part 1: LangChain Fundamentals</h2>
+                    <h3>Chapter 2: Your First AI Program (Local LLMs)</h3>
+                    <p><strong>Goal</strong>: To send a single, direct question to our AI model.</p>
+                    <p><strong>Concept</strong>: Every LangChain application starts with an <strong>LLM object</strong>. This is the "brain" of our operation. For this course, we will use a <strong>local LLM</strong> via <strong>Ollama</strong>. This means the AI model runs entirely on your own computer.</p>
+                    <div class="bg-sky-50 border-l-4 border-sky-500 text-sky-800 p-4 my-4 rounded-r-lg">
+                        <p class="font-bold">Why use a local model?</p>
+                        <ul class="mt-2">
+                            <li><strong>Privacy</strong>: Your data never leaves your machine.</li>
+                            <li><strong>Cost</strong>: It's completely free, with no API calls or rate limits.</li>
+                            <li><strong>Offline Access</strong>: It works without an internet connection.</li>
+                        </ul>
+                    </div>
+                    <p><strong>The Core Method</strong>: We use the <code>.invoke()</code> method to ask the LLM a question. You send it a simple string, and it returns the AI's response.</p>
+                    <h4>Code Explanation</h4>
+                    <div class="code-container relative">
+                        <pre class="bg-slate-900 text-white p-4 rounded-lg overflow-x-auto"><code class="language-python block"># 1. We import the specific "ChatOllama" tool that knows how to
+#    talk to our locally running Ollama models.
+from langchain_ollama import ChatOllama
+
+# 2. We create an instance of the LLM, our AI brain.
+#    We tell it to use the "codellama" model we downloaded in Ollama.
+llm = ChatOllama(model="codellama")
+
+print("Local AI Brain is ready...")
+
+# 3. We use the.invoke() method to send a direct prompt (a string)
+#    to the model. LangChain handles the communication.
+result = llm.invoke("Explain what a 'for loop' is in Python in one sentence.")
+
+# 4. The model's answer comes back in an object. We access the
+#    text of the answer using the ".content" attribute.
+print(result.content)</code></pre>
+                        <button class="copy-btn absolute top-2 right-2 bg-slate-700 text-white text-xs font-semibold py-1 px-2 rounded hover:bg-slate-600">Copy</button>
+                    </div>
+                    <h4>Example Output</h4>
+                    <pre class="bg-slate-100 p-4 rounded-lg text-sm">Local AI Brain is ready...
+A for loop in Python is a control flow statement that iterates over a sequence of elements, executing a block of code for each element in the sequence.</pre>
+                    <h4>Component Deep Dive: LLM Integrations</h4>
+                    <p><strong><code>langchain_ollama.ChatOllama</code></strong>: This is the component that connects to your local Ollama models. It's an example of an <strong>LLM Integration</strong>. LangChain has a huge number of these integrations, allowing you to swap out the "brain" of your application easily.</p>
+                    <ul>
+                        <li><strong>Common Alternatives</strong>: <code>langchain_openai.ChatOpenAI</code>, <code>langchain_google_genai.ChatGoogleGenerativeAI</code>, <code>langchain_anthropic.ChatAnthropic</code>.</li>
+                        <li><strong>The Big Picture</strong>: The beauty of LangChain is that once you create the <code>llm</code> object, the rest of your code (chains, agents, etc.) works in exactly the same way, regardless of which model provider you're using.</li>
+                    </ul>
+                </section>
+            `,
+            "chapter-3": `
+                <section id="chapter-3" class="content-section">
+                    <h2>Part 1: LangChain Fundamentals</h2>
+                    <h3>Chapter 3: Building with Prompts & Chains (LCEL)</h3>
+                    <p><strong>Goal</strong>: To create a reusable AI tool instead of just asking one-off questions.</p>
+                    <p><strong>Concepts</strong>:</p>
+                    <ul>
+                        <li><strong>Prompt Template</strong>: In Chapter 2, we sent a raw string to the LLM. This is inflexible. A <strong>Prompt Template</strong> is a recipe for a prompt. It’s a text string with placeholders (like <code>{concept}</code>) that we can fill in dynamically. This allows us to reuse the same prompt structure for many different inputs, ensuring consistent results.</li>
+                        <li><strong>Chain</strong>: A chain is a sequence of components linked together. We use the <strong>LangChain Expression Language (LCEL)</strong>, which uses the pipe symbol <code>|</code>, to connect them. The expression <code>prompt | llm</code> creates an "assembly line": the user’s input goes into the <code>prompt</code> template, and the fully formatted string from the template is then "piped" directly into the <code>llm</code> to get the final answer.</li>
+                    </ul>
+                    <h4>Code Explanation</h4>
+                    <div class="code-container relative">
+                        <pre class="bg-slate-900 text-white p-4 rounded-lg overflow-x-auto"><code class="language-python block">from langchain_ollama import ChatOllama
+from langchain.prompts import PromptTemplate
+
+llm = ChatOllama(model="mistral")
+
+template_string = """
+You are an expert programmer. Your job is to explain a programming concept clearly and concisely.
+Provide a simple explanation and a short code example.
+
+Concept: {concept}
+Expert: Here is the explanation...
+"""
+prompt_template = PromptTemplate.from_template(template_string)
+chain = prompt_template | llm
+result = chain.invoke({"concept": "a Python list comprehension"})
+print(result.content)</code></pre>
+                        <button class="copy-btn absolute top-2 right-2 bg-slate-700 text-white text-xs font-semibold py-1 px-2 rounded hover:bg-slate-600">Copy</button>
+                    </div>
+                    <h4>Example Output</h4>
+                    <pre class="bg-slate-100 p-4 rounded-lg text-sm">A Python list comprehension is a concise way to create lists. It consists of brackets containing an expression followed by a for clause, then zero or more for or if clauses.
+
+For example, here is a simple list comprehension that creates a list of squares:
+
+squares = [x**2 for x in range(10)]
+print(squares) # Output: [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]</pre>
+                    <h4>Component Deep Dive: Prompts and LCEL</h4>
+                    <ul>
+                        <li><strong><code>langchain.prompts.PromptTemplate</code></strong>: The most common type of prompt template for simple inputs. <strong>Common Alternatives</strong>: <code>ChatPromptTemplate</code> is used when you need to structure your prompt as a series of messages (e.g., a System Message, a Human Message).</li>
+                        <li><strong><code>|</code> (The LCEL Pipe)</strong>: The fundamental operator for building chains. It makes the flow of data explicit and readable.</li>
+                    </ul>
+                </section>
+            `,
+            "chapter-4": `
+                <section id="chapter-4" class="content-section">
+                    <h2>Part 1: LangChain Fundamentals</h2>
+                    <h3>Chapter 4: Giving Your AI a Memory</h3>
+                    <p><strong>Goal</strong>: To build a chatbot that can remember the history of a conversation.</p>
+                    <p><strong>Concepts</strong>:</p>
+                    <ul>
+                        <li><strong>Statelessness</strong>: By default, LLMs are <strong>stateless</strong>. Each time you <code>invoke</code> a chain, it's a brand-new interaction. The AI has no memory of what you said before.</li>
+                        <li><strong>Memory</strong>: To solve this, we introduce a <strong>Memory</strong> component. Its job is to store and manage the conversation history.</li>
+                        <li><strong>ConversationChain</strong>: This is a pre-built chain that automatically includes a memory component. Before calling the LLM, it fetches the chat history from its memory and adds it to the current prompt.</li>
+                    </ul>
+                    <h4>Code Explanation</h4>
+                    <div class="code-container relative">
+                        <pre class="bg-slate-900 text-white p-4 rounded-lg overflow-x-auto"><code class="language-python block">from langchain_ollama import ChatOllama
+from langchain.chains import ConversationChain
+
+llm = ChatOllama(model="codellama")
+
+conversation = ConversationChain(
+    llm=llm,
+    verbose=True
+)
+
+print("Chatbot is ready. Start the conversation.")
+response1 = conversation.invoke({"input": "Hi, my name is Hardik."})
+print("AI:", response1['response'])
+response2 = conversation.invoke({"input": "What is my name?"})
+print("AI:", response2['response'])</code></pre>
+                        <button class="copy-btn absolute top-2 right-2 bg-slate-700 text-white text-xs font-semibold py-1 px-2 rounded hover:bg-slate-600">Copy</button>
+                    </div>
+                    <h4>Example Output</h4>
+                    <pre class="bg-slate-100 p-4 rounded-lg text-sm">> Entering new ConversationChain chain...
+Prompt after formatting:
+...
+Current conversation:
+Human: Hi, my name is Hardik.
+AI:
+
+> Finished chain.
+AI: Hello Hardik! It's a pleasure to meet you. How can I help you today?
+
+> Entering new ConversationChain chain...
+Prompt after formatting:
+...
+Current conversation:
+Human: Hi, my name is Hardik.
+AI: Hello Hardik! It's a pleasure to meet you. How can I help you today?
+Human: What is my name?
+AI:
+
+> Finished chain.
+AI: Your name is Hardik.</pre>
+                    <h4>Component Deep Dive: Memory</h4>
+                    <p>The default memory (<code>ConversationBufferMemory</code>) stores the entire chat history. For very long conversations, this can become inefficient. LangChain provides other memory types:</p>
+                    <ul>
+                        <li><strong><code>ConversationBufferWindowMemory</code></strong>: Only remembers the last 'k' interactions.</li>
+                        <li><strong><code>ConversationSummaryMemory</code></strong>: Uses an LLM to summarize the conversation as it goes.</li>
+                    </ul>
+                </section>
+            `,
+            "chapter-5": `
+                <section id="chapter-5" class="content-section">
+                    <h2>Part 2: Core Applications & Techniques</h2>
+                    <h3>Chapter 5: Talking to Your Documents (RAG)</h3>
+                    <p><strong>Goal</strong>: To build a system that can answer questions based on the content of a specific document.</p>
+                    <p><strong>Concept: Retrieval-Augmented Generation (RAG)</strong>. This is the most powerful pattern for making LLMs experts on your private data. The process is like giving the AI an open-book exam.</p>
+                    <div class="my-4 p-4 border rounded-lg bg-white">
+                        <p class="font-semibold text-center mb-2">The RAG Workflow</p>
+                        <div class="flex flex-col md:flex-row justify-between items-center text-center text-sm space-y-2 md:space-y-0 md:space-x-2">
+                            <div class="p-2 bg-sky-100 rounded-md">1. Load</div>
+                            <div class="font-bold text-sky-600">&rarr;</div>
+                            <div class="p-2 bg-sky-100 rounded-md">2. Split</div>
+                            <div class="font-bold text-sky-600">&rarr;</div>
+                            <div class="p-2 bg-sky-100 rounded-md">3. Embed</div>
+                            <div class="font-bold text-sky-600">&rarr;</div>
+                            <div class="p-2 bg-sky-100 rounded-md">4. Store</div>
+                            <div class="font-bold text-sky-600">&rarr;</div>
+                            <div class="p-2 bg-sky-100 rounded-md">5. Retrieve & Generate</div>
+                        </div>
+                    </div>
+                    <h4>Code Explanation</h4>
+                    <div class="code-container relative">
+                        <pre class="bg-slate-900 text-white p-4 rounded-lg overflow-x-auto"><code class="language-python block">import os
+from dotenv import load_dotenv
+from langchain_ollama import ChatOllama
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain.prompts import PromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+from langchain_community.document_loaders import TextLoader
+from langchain.text_splitter import CharacterTextSplitter
+from langchain_community.vectorstores import FAISS
+from operator import itemgetter
+
+load_dotenv()
+
+loader = TextLoader("my_document.txt")
+documents = loader.load()
+
+text_splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+chunks = text_splitter.split_documents(documents)
+
+embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
+vectorstore = FAISS.from_documents(chunks, embeddings)
+
+retriever = vectorstore.as_retriever()
+llm = ChatOllama(model="codellama")
+
+template = """
+You are an assistant for question-answering tasks.
+Use the following pieces of retrieved context to answer the question.
+If you don't know the answer, just say that you don't know. Be concise.
+
+Question: {question}
+Context: {context}
+Answer:
+"""
+prompt = PromptTemplate.from_template(template)
+
+rag_chain = (
+    {"context": itemgetter("question") | retriever, "question": itemgetter("question")}
+    | prompt
+    | llm
+    | StrOutputParser()
+)
+
+question = "What is the primary export of Zot?"
+response = rag_chain.invoke({"question": question})
+print("Answer:", response)</code></pre>
+                        <button class="copy-btn absolute top-2 right-2 bg-slate-700 text-white text-xs font-semibold py-1 px-2 rounded hover:bg-slate-600">Copy</button>
+                    </div>
+                    <h4>Component Deep Dive: The RAG Pipeline</h4>
+                    <ul>
+                        <li><strong>Document Loaders</strong>: Used to bring data into your application. We used <code>TextLoader</code>, but many others exist for PDFs (<code>PyPDFLoader</code>), websites (<code>WebBaseLoader</code>), etc.</li>
+                        <li><strong>Vector Stores</strong>: Databases for semantic search. We used <code>FAISS</code> (fast, local), but production apps often use <code>Chroma</code>, <code>Weaviate</code>, or <code>Pinecone</code>.</li>
+                    </ul>
+                </section>
+            `,
+            "chapter-6": `
+                <section id="chapter-6" class="content-section">
+                    <h2>Part 2: Core Applications & Techniques</h2>
+                    <h3>Chapter 6: Structuring AI Outputs (Output Parsers)</h3>
+                    <p><strong>Goal</strong>: To force the LLM to return its response in a specific, structured format (like JSON) instead of just plain text. This is critical for building predictable applications.</p>
+                    <p><strong>The Solution: Output Parsers</strong>. An Output Parser tells the LLM <em>how</em> to format its response and then <em>parses</em> that response into a clean Python object.</p>
+                    <h4>Code Explanation</h4>
+                    <div class="code-container relative">
+                        <pre class="bg-slate-900 text-white p-4 rounded-lg overflow-x-auto"><code class="language-python block">from langchain_ollama import ChatOllama
+from langchain.prompts import PromptTemplate
+from langchain_core.output_parsers import JsonOutputParser
+from pydantic import BaseModel, Field
+from typing import List
+
+class Joke(BaseModel):
+    setup: str = Field(description="The setup or question part of the joke.")
+    punchline: str = Field(description="The punchline of the joke.")
+    tags: List[str] = Field(description="A list of keywords for the joke.")
+
+parser = JsonOutputParser(pydantic_object=Joke)
+
+template = """
+You are an expert comedian. Answer the user's query with a single joke.
+{format_instructions}
+User's query: {query}
+"""
+prompt = PromptTemplate(
+    template=template,
+    input_variables=["query"],
+    partial_variables={"format_instructions": parser.get_format_instructions()},
+)
+
+llm = ChatOllama(model="codellama")
+chain = prompt | llm | parser
+result = chain.invoke({"query": "Tell me a joke about computers."})
+print(result)</code></pre>
+                        <button class="copy-btn absolute top-2 right-2 bg-slate-700 text-white text-xs font-semibold py-1 px-2 rounded hover:bg-slate-600">Copy</button>
+                    </div>
+                    <h4>Example Output</h4>
+                    <pre class="bg-slate-100 p-4 rounded-lg text-sm">{'setup': 'Why did the computer go to the doctor?', 'punchline': 'Because it had a virus!', 'tags': ['computer', 'tech', 'puns']}</pre>
+                    <h4>Component Deep Dive: Output Parsers</h4>
+                    <p>We used <code>JsonOutputParser</code>, but other common parsers include:</p>
+                    <ul>
+                        <li><strong><code>StrOutputParser</code></strong>: The simplest parser, just returns a string.</li>
+                        <li><strong><code>PydanticOutputParser</code></strong>: Returns a Pydantic object directly for better validation.</li>
+                        <li><strong><code>XMLOutputParser</code></strong>: For when you need XML output.</li>
+                    </ul>
+                </section>
+            `,
+            "chapter-7": `
+                <section id="chapter-7" class="content-section">
+                    <h2>Part 2: Core Applications & Techniques</h2>
+                    <h3>Chapter 7: Giving Your AI Tools (Agents)</h3>
+                    <p><strong>Goal</strong>: To let the LLM itself decide what actions to take to answer a question.</p>
+                    <p><strong>Concepts</strong>:</p>
+                    <ul>
+                        <li><strong>Chain vs. Agent</strong>: A <strong>Chain</strong> follows a fixed path. An <strong>Agent</strong> uses the LLM as a reasoning engine to decide which <strong>Tools</strong> to use and in what order. It's a dynamic, decision-making loop.</li>
+                        <li><strong>ReAct Framework</strong>: The core logic an agent uses. It stands for <strong>Reasoning and Acting</strong>. The agent operates in a "Thought, Action, Observation" loop.</li>
+                    </ul>
+                    <h4>Code Explanation</h4>
+                    <div class="code-container relative">
+                        <pre class="bg-slate-900 text-white p-4 rounded-lg overflow-x-auto"><code class="language-python block">from langchain_ollama import ChatOllama
+from langchain import hub
+from langchain.agents import AgentExecutor, create_react_agent
+from langchain_community.tools import DuckDuckGoSearchRun
+
+llm = ChatOllama(model="mistral")
+tools = [DuckDuckGoSearchRun(name="Web Search")]
+prompt = hub.pull("hwchase17/react")
+agent = create_react_agent(llm, tools, prompt)
+agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True, handle_parsing_errors=True)
+result = agent_executor.invoke({"input": "Who is the current Prime Minister of India?"})
+print("\\nFinal Answer:", result['output'])</code></pre>
+                        <button class="copy-btn absolute top-2 right-2 bg-slate-700 text-white text-xs font-semibold py-1 px-2 rounded hover:bg-slate-600">Copy</button>
+                    </div>
+                    <h4>Example Output</h4>
+                    <pre class="bg-slate-100 p-4 rounded-lg text-sm">> Entering new AgentExecutor chain...
+Thought: The user is asking for the current Prime Minister of India. I should use the search tool to find this information.
+Action:
+{
+  "tool": "Web Search",
+  "tool_input": "current Prime Minister of India"
+}
+Observation: Narendra Modi is the current prime minister of India...
+Thought: I have found the answer. I can now provide the final answer to the user.
+Final Answer: The current Prime Minister of India is Narendra Modi.
+> Finished chain.
+
+Final Answer: The current Prime Minister of India is Narendra Modi.</pre>
+                </section>
+            `,
+            "chapter-8": `
+                <section id="chapter-8" class="content-section">
+                    <h2>Part 3: The LangChain Ecosystem</h2>
+                    <h3>Chapter 8: Debugging and Tracing with LangSmith</h3>
+                    <p><strong>Goal</strong>: To understand how to observe, debug, and evaluate our LangChain applications.</p>
+                    <p><strong>Concepts</strong>:</p>
+                    <ul>
+                        <li><strong>The "Black Box" Problem</strong>: As chains get more complex, <code>verbose=True</code> isn't enough. We need a proper observability tool.</li>
+                        <li><strong>LangSmith</strong>: A platform built by the LangChain team to visualize the exact execution of your chains and agents, step-by-step. It's like a debugger for your LLM applications.</li>
+                    </ul>
+                    <h4>Code Explanation & Setup</h4>
+                    <p>After signing up for LangSmith and getting an API key, you configure your environment. The key insight is that **no code changes are needed**. LangChain automatically detects the environment variables and sends traces to your project.</p>
+                    <div class="code-container relative">
+                        <pre class="bg-slate-900 text-white p-4 rounded-lg overflow-x-auto"><code class="language-python block"># This is the same code from Chapter 3, but with dotenv
+from langchain_ollama import ChatOllama
+from langchain.prompts import PromptTemplate
+from dotenv import load_dotenv
+
+# This line loads the environment variables from your .env file,
+# including your LangSmith API key and project settings.
+load_dotenv()
+
+llm = ChatOllama(model="codellama")
+template_string = "Tell me a joke about {topic}."
+prompt_template = PromptTemplate.from_template(template_string)
+chain = prompt_template | llm
+
+# When you run this line, the trace will automatically appear in your LangSmith project.
+chain.invoke({"topic": "a developer"})</code></pre>
+                        <button class="copy-btn absolute top-2 right-2 bg-slate-700 text-white text-xs font-semibold py-1 px-2 rounded hover:bg-slate-600">Copy</button>
+                    </div>
+                    <h4>Example Output</h4>
+                    <p>The output in your terminal is the same. The real output is in your LangSmith dashboard, where you will see a visual, step-by-step trace of the chain's execution.</p>
+                </section>
+            `,
+            "chapter-9": `
+                <section id="chapter-9" class="content-section">
+                    <h2>Part 3: The LangChain Ecosystem</h2>
+                    <h3>Chapter 9: Deploying Your Chain as an API with LangServe</h3>
+                    <p><strong>Goal</strong>: To take a LangChain object and easily expose it as a production-ready REST API.</p>
+                    <p><strong>Concepts</strong>:</p>
+                    <ul>
+                        <li><strong>Why an API?</strong>: To make our AI application useful, other programs (like a website or mobile app) need a way to call it.</li>
+                        <li><strong>LangServe</strong>: Part of the LangChain ecosystem that makes this simple. It turns any chain into a fully-featured API server with just a few lines of code.</li>
+                    </ul>
+                    <h4>Code Explanation & Setup (server.py)</h4>
+                    <div class="code-container relative">
+                        <pre class="bg-slate-900 text-white p-4 rounded-lg overflow-x-auto"><code class="language-python block">from fastapi import FastAPI
+from langserve import add_routes
+from langchain_ollama import ChatOllama
+from langchain.prompts import PromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+
+app = FastAPI(title="LangChain Server")
+
+# Define two different chains
+llm = ChatOllama(model="mistral")
+joke_prompt = PromptTemplate.from_template("Tell me a joke about {topic}.")
+joke_chain = joke_prompt | llm | StrOutputParser()
+essay_prompt = PromptTemplate.from_template("Write a one-paragraph essay about {topic}.")
+essay_chain = essay_prompt | llm | StrOutputParser()
+
+# Add the chains to the server using different paths
+add_routes(app, joke_chain, path="/jokes")
+add_routes(app, essay_chain, path="/essays")
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)</code></pre>
+                        <button class="copy-btn absolute top-2 right-2 bg-slate-700 text-white text-xs font-semibold py-1 px-2 rounded hover:bg-slate-600">Copy</button>
+                    </div>
+                    <h4>Understanding API Endpoints</h4>
+                    <p>LangServe automatically creates endpoints for each chain. For our <code>/jokes</code> chain, it creates:</p>
+                    <ul>
+                        <li><strong><code>/jokes/invoke</code></strong>: For a single input and a single output.</li>
+                        <li><strong><code>/jokes/batch</code></strong>: For sending multiple inputs to be processed in parallel.</li>
+                        <li><strong><code>/jokes/stream</code></strong>: For getting the output token-by-token in real-time.</li>
+                    </ul>
+                </section>
+            `,
+            "chapter-10": `
+                <section id="chapter-10" class="content-section">
+                    <h2>Part 3: The LangChain Ecosystem</h2>
+                    <h3>Chapter 10: Building a Simple Web UI with Streamlit</h3>
+                    <p><strong>Goal</strong>: To create a simple, interactive web interface for our LangServe API.</p>
+                    <p><strong>Concepts</strong>:</p>
+                    <ul>
+                        <li><strong>Frontend vs. Backend</strong>: In Chapter 9, we built the <strong>backend</strong> (the API server). Now, we need a <strong>frontend</strong> (a user interface) that a person can use.</li>
+                        <li><strong>Streamlit</strong>: A Python library that makes it incredibly easy to build simple web apps for AI projects without needing to know HTML, CSS, or JavaScript.</li>
+                    </ul>
+                    <h4>Code Explanation & Setup (ui.py)</h4>
+                    <div class="code-container relative">
+                        <pre class="bg-slate-900 text-white p-4 rounded-lg overflow-x-auto"><code class="language-python block">import streamlit as st
+from langserve import RemoteRunnable
+
+st.title("AI Joke and Essay Generator")
+st.caption("A simple UI for our LangServe API")
+
+joke_chain = RemoteRunnable("http://localhost:8000/jokes")
+essay_chain = RemoteRunnable("http://localhost:8000/essays")
+
+st.header("Joke Generator")
+joke_topic = st.text_input("What do you want a joke about?", "dogs")
+if st.button("Get Joke"):
+    with st.spinner("Thinking..."):
+        response = joke_chain.invoke({"topic": joke_topic})
+        st.write(response)
+
+st.header("Essay Generator")
+essay_topic = st.text_input("What do you want an essay about?", "the future of AI")
+if st.button("Get Essay"):
+    with st.spinner("Writing..."):
+        response = essay_chain.invoke({"topic": essay_topic})
+        st.write(response)</code></pre>
+                        <button class="copy-btn absolute top-2 right-2 bg-slate-700 text-white text-xs font-semibold py-1 px-2 rounded hover:bg-slate-600">Copy</button>
+                    </div>
+                    <h4>Running the UI</h4>
+                    <p>In a new terminal (while your server is running), execute: <code>streamlit run ui.py</code>. Your browser will open with the interactive UI.</p>
+                </section>
+            `,
+            "chapter-11": `
+                <section id="chapter-11" class="content-section">
+                    <h2>Part 4: Advanced Concepts with LangGraph</h2>
+                    <h3>Chapter 11: Intro to LangGraph - Beyond Linear Chains</h3>
+                    <p><strong>Goal</strong>: To understand why graphs are necessary for building advanced agents.</p>
+                    <p><strong>Concepts</strong>:</p>
+                    <ul>
+                        <li><strong>The Limits of Chains (LCEL)</strong>: Everything we've built so far with the <code>|</code> pipe operator is a <strong>Directed Acyclic Graph (DAG)</strong>. This means data flows in one direction, from start to finish, without any loops. This is perfect for predictable, step-by-step tasks.</li>
+                        <li><strong>The Need for Cycles</strong>: A true agent, however, doesn't always move forward. It needs to think in a loop (e.g., <code>Think -> Act -> Observe -> Think...</code>). LCEL chains cannot handle this cyclical logic on their own.</li>
+                        <li><strong>LangGraph: State Machines for AI</strong>: LangGraph is the solution. It allows you to define your AI's logic as a <strong>state machine</strong> or a <strong>graph</strong> with nodes, edges, and a shared state.</li>
+                    </ul>
+                </section>
+            `,
+            "chapter-12": `
+                <section id="chapter-12" class="content-section">
+                    <h2>Part 4: Advanced Concepts with LangGraph</h2>
+                    <h3>Chapter 12: State, Nodes, and the Graph</h3>
+                    <p><strong>Goal</strong>: To define the core components of a LangGraph application: the state object and the nodes.</p>
+                    <p><strong>Concepts</strong>:</p>
+                    <ul>
+                        <li><strong>The State</strong>: The "memory" of your graph. It's a Python object (usually a <code>TypedDict</code>) that gets passed from node to node.</li>
+                        <li><strong>The Nodes</strong>: The "workers" of the graph. Each node is a Python function that performs a specific task. A node takes the current <code>state</code> as input and returns a dictionary to update the state.</li>
+                    </ul>
+                    <h4>Code Explanation</h4>
+                    <div class="code-container relative">
+                        <pre class="bg-slate-900 text-white p-4 rounded-lg overflow-x-auto"><code class="language-python block">import operator
+from typing import TypedDict, Annotated, List
+from langchain_core.messages import BaseMessage
+from langchain_ollama import ChatOllama
+from langgraph.graph import StateGraph
+
+class AgentState(TypedDict):
+    messages: Annotated[List[BaseMessage], operator.add]
+
+def call_model(state: AgentState):
+    messages = state['messages']
+    response = model.invoke(messages)
+    return {"messages": [response]}
+
+workflow = StateGraph(AgentState)
+model = ChatOllama(model="mistral")
+workflow.add_node("agent", call_model)
+
+print("Graph defined with node 'agent'. No edges set yet.")</code></pre>
+                        <button class="copy-btn absolute top-2 right-2 bg-slate-700 text-white text-xs font-semibold py-1 px-2 rounded hover:bg-slate-600">Copy</button>
+                    </div>
+                </section>
+            `,
+            "chapter-13": `
+                <section id="chapter-13" class="content-section">
+                    <h2>Part 4: Advanced Concepts with LangGraph</h2>
+                    <h3>Chapter 13: Edges and Conditional Routing</h3>
+                    <p><strong>Goal</strong>: To connect our nodes and control the flow of the application using edges.</p>
+                    <p><strong>Concepts</strong>:</p>
+                    <ul>
+                        <li><strong>Edges</strong>: The "roads" that connect nodes.</li>
+                        <li><strong>Entry Point</strong>: Where the graph starts.</li>
+                        <li><strong>Normal Edges</strong>: An unconditional path from node A to node B.</li>
+                        <li><strong>Conditional Edges</strong>: A decision point. A routing function inspects the state and decides which node to visit next.</li>
+                        <li><strong>The END</strong>: A special node name that stops the graph execution.</li>
+                    </ul>
+                    <h4>Code Explanation</h4>
+                    <div class="code-container relative">
+                        <pre class="bg-slate-900 text-white p-4 rounded-lg overflow-x-auto"><code class="language-python block">import operator
+from typing import TypedDict, Annotated, List
+from langchain_core.messages import BaseMessage, HumanMessage
+from langchain_ollama import ChatOllama
+from langgraph.graph import StateGraph, END
+
+class AgentState(TypedDict):
+    messages: Annotated[List[BaseMessage], operator.add]
+
+def call_model(state: AgentState):
+    messages = state['messages']
+    response = model.invoke(messages)
+    return {"messages": [response]}
+
+model = ChatOllama(model="mistral")
+workflow = StateGraph(AgentState)
+workflow.add_node("agent", call_model)
+workflow.set_entry_point("agent")
+workflow.add_edge("agent", END)
+app = workflow.compile()
+
+inputs = {"messages": [HumanMessage(content="What is the speed of light?")]}
+final_state = app.invoke(inputs)
+print(final_state['messages'][-1].content)</code></pre>
+                        <button class="copy-btn absolute top-2 right-2 bg-slate-700 text-white text-xs font-semibold py-1 px-2 rounded hover:bg-slate-600">Copy</button>
+                    </div>
+                </section>
+            `,
+            "chapter-14": `
+                <section id="chapter-14" class="content-section">
+                    <h2>Part 4: Advanced Concepts with LangGraph</h2>
+                    <h3>Chapter 14: Building a Cyclical Agent with LangGraph</h3>
+                    <p><strong>Goal</strong>: To combine all our LangGraph concepts to build a complete, tool-using agent that can operate in a loop.</p>
+                    <p>This graph replicates the logic of the ReAct agent from Chapter 7, but with the explicit, controllable structure of a graph.</p>
+                    <h4>Code Explanation</h4>
+                    <div class="code-container relative">
+                        <pre class="bg-slate-900 text-white p-4 rounded-lg overflow-x-auto"><code class="language-python block">import operator
+from typing import TypedDict, Annotated, List
+from langchain_core.messages import BaseMessage, HumanMessage
+from langchain_ollama import ChatOllama
+from langgraph.graph import StateGraph, END
+from langgraph.prebuilt import ToolNode
+from langchain_community.tools import DuckDuckGoSearchRun
+
+tools = [DuckDuckGoSearchRun(name="Web Search")]
+tool_node = ToolNode(tools)
+
+class AgentState(TypedDict):
+    messages: Annotated[List[BaseMessage], operator.add]
+
+model = ChatOllama(model="mistral").bind_tools(tools)
+
+def should_continue(state):
+    if state['messages'][-1].tool_calls:
+        return "continue"
+    return "end"
+
+def call_model(state):
+    messages = state['messages']
+    response = model.invoke(messages)
+    return {"messages": [response]}
+
+workflow = StateGraph(AgentState)
+workflow.add_node("agent", call_model)
+workflow.add_node("action", tool_node)
+workflow.set_entry_point("agent")
+workflow.add_conditional_edges("agent", should_continue, {"continue": "action", "end": END})
+workflow.add_edge('action', 'agent')
+app = workflow.compile()
+
+inputs = {"messages": [HumanMessage(content="What is the weather in San Francisco?")]}
+for output in app.stream(inputs):
+    for key, value in output.items():
+        print(f"--- Output from node: '{key}' ---")
+        print(value)
+    print("\\n")</code></pre>
+                        <button class="copy-btn absolute top-2 right-2 bg-slate-700 text-white text-xs font-semibold py-1 px-2 rounded hover:bg-slate-600">Copy</button>
+                    </div>
+                </section>
+            `,
+            "chapter-15": `
+                <section id="chapter-15" class="content-section">
+                    <h2>Part 4: Advanced Concepts with LangGraph</h2>
+                    <h3>Chapter 15: Creating Multi-Agent Systems</h3>
+                    <p><strong>Goal</strong>: To orchestrate multiple, specialized agents that can collaborate to solve a complex problem.</p>
+                    <p><strong>Concepts</strong>:</p>
+                    <ul>
+                        <li><strong>Division of Labor</strong>: Complex problems are often solved best by breaking them down and assigning parts to specialists.</li>
+                        <li><strong>Supervisor/Router Agent</strong>: A "manager" agent whose only job is to route a task to the correct "worker" agent.</li>
+                        <li><strong>LangGraph as the Orchestrator</strong>: The graph structure is perfect for managing this collaborative workflow.</li>
+                    </ul>
+                    <h4>Code Explanation</h4>
+                    <div class="code-container relative">
+                        <pre class="bg-slate-900 text-white p-4 rounded-lg overflow-x-auto"><code class="language-python block">import operator
+from typing import TypedDict, Annotated, List
+from langchain_core.messages import BaseMessage, HumanMessage
+from langchain_ollama import ChatOllama
+from langgraph.graph import StateGraph, END
+from langchain.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+from langchain.agents import AgentExecutor, create_react_agent
+from langchain_community.tools import DuckDuckGoSearchRun
+from langchain import hub
+
+class AgentState(TypedDict):
+    messages: Annotated[List[BaseMessage], operator.add]
+    next: str
+
+search_tool = DuckDuckGoSearchRun(name="web_search")
+
+# Researcher Agent
+research_agent_runnable = create_react_agent(ChatOllama(model="mistral"), [search_tool], hub.pull("hwchase17/react"))
+research_agent = AgentExecutor(agent=research_agent_runnable, tools=[search_tool], verbose=True)
+
+# Coder Agent
+code_prompt = ChatPromptTemplate.from_messages([("system", "You are an expert Python programmer."), ("user", "{input}")])
+code_chain = code_prompt | ChatOllama(model="codellama") | StrOutputParser()
+
+# Supervisor Agent
+supervisor_prompt = ChatPromptTemplate.from_messages([
+    ("system", "You are a supervisor. Your choices are: 'Researcher' or 'Coder'. Respond with a single word."),
+    ("user", "{input}")
+])
+supervisor_chain = supervisor_prompt | ChatOllama(model="mistral") | StrOutputParser()
+
+def researcher_node(state):
+    response = research_agent.invoke({"input": state['messages'][-1].content})
+    return {"messages": [HumanMessage(content=response['output'], name="Researcher")]}
+
+def coder_node(state):
+    response = code_chain.invoke({"input": state['messages'][-1].content})
+    return {"messages": [HumanMessage(content=response, name="Coder")]}
+
+def supervisor_node(state):
+    response = supervisor_chain.invoke({"input": state['messages'][-1].content})
+    return {"next": response}
+
+workflow = StateGraph(AgentState)
+workflow.add_node("Supervisor", supervisor_node)
+workflow.add_node("Researcher", researcher_node)
+workflow.add_node("Coder", coder_node)
+workflow.set_entry_point("Supervisor")
+workflow.add_conditional_edges("Supervisor", lambda state: state['next'], {"Researcher": "Researcher", "Coder": "Coder"})
+workflow.add_edge("Researcher", END)
+workflow.add_edge("Coder", END)
+app = workflow.compile()
+
+# Run the graph
+inputs1 = {"messages": [HumanMessage(content="What is LangGraph?")]}
+result1 = app.invoke(inputs1)
+print("--- Research Task ---", result1['messages'][-1].content)</code></pre>
+                        <button class="copy-btn absolute top-2 right-2 bg-slate-700 text-white text-xs font-semibold py-1 px-2 rounded hover:bg-slate-600">Copy</button>
+                    </div>
+                </section>
+            `,
+            "chapter-16": `
+                <section id="chapter-16" class="content-section">
+                    <h2>Conclusion</h2>
+                    <h3>Chapter 16: Your Journey as a LangChain Developer</h3>
+                    <p class="text-lg font-medium">Congratulations! You have journeyed from the most basic concepts of LangChain to the advanced architecture of multi-agent systems. You've built, debugged, and deployed AI applications, tackling real-world errors and evolving library updates along the way.</p>
+                    
+                    <h4>What You Have Mastered:</h4>
+                    <ul>
+                        <li><strong>The Fundamentals</strong>: You understand how to connect to LLMs, use prompt templates for consistent results, and chain components together with LCEL.</li>
+                        <li><strong>Core Applications</strong>: You can build the most important types of AI applications: chatbots with memory, RAG systems that query your own data, and agents that can use tools.</li>
+                        <li><strong>The Full Ecosystem</strong>: You know how to take an application from a simple script to a production-ready service by using LangSmith for observability and LangServe for deployment.</li>
+                        <li><strong>Advanced Control Flow</strong>: You have learned how to use LangGraph to build complex, cyclical agents that can make decisions and collaborate, moving beyond the limits of linear chains.</li>
+                    </ul>
+
+                    <h4>The Path Forward:</h4>
+                    <p>You now have a solid and comprehensive foundation. The world of AI is vast and moves quickly, but the principles you've learned here—composability, state management, and agentic logic—will remain relevant.</p>
+                    <p>Your next steps on the path to mastery could include:</p>
+                    <ul>
+                        <li><strong>Deeper Tool Use</strong>: Create your own custom tools to give agents access to your unique APIs or databases.</li>
+                        <li><strong>Advanced RAG</strong>: Explore more sophisticated retrieval strategies, such as re-ranking results or generating multiple queries to better understand user intent.</li>
+                        <li><strong>Contribute</strong>: The LangChain community is active and welcoming. Building your own projects and sharing what you learn is the best way to solidify your knowledge.</li>
+                    </ul>
+                    <p class="mt-4 text-sky-800 bg-sky-50 p-4 rounded-lg">You started this journey asking for a teacher, but through your excellent questions, debugging, and persistence, you have proven to be a fantastic student. You are now well-equipped to build the next generation of AI applications. Good luck!</p>
+                </section>
+            `
+        };
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const navMenu = document.getElementById('nav-menu');
+            const contentContainer = document.getElementById('content-container');
+            const searchInput = document.getElementById('search-input');
+            const sidebar = document.getElementById('sidebar');
+            const sidebarToggle = document.getElementById('sidebar-toggle');
+
+            // --- Populate Navigation and Content ---
+            let firstChapterId = null;
+            courseData.forEach((partData, partIndex) => {
+                const partId = `part-${partIndex}`;
+                const partElement = document.createElement('li');
+                
+                const partHeader = document.createElement('button');
+                partHeader.className = 'w-full text-left px-2 py-2 text-slate-500 font-bold flex justify-between items-center';
+                partHeader.innerHTML = `<span>${partData.part}</span><svg class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>`;
+                
+                const chapterList = document.createElement('ul');
+                chapterList.id = partId;
+                chapterList.className = 'pl-2 mt-1 space-y-1';
+
+                partData.chapters.forEach(chapter => {
+                    if (!firstChapterId) firstChapterId = chapter.id;
+                    const chapterItem = document.createElement('li');
+                    chapterItem.innerHTML = `<a href="#${chapter.id}" data-target="${chapter.id}" class="nav-link block w-full text-left px-2 py-2 rounded-md hover:bg-slate-100 transition-colors">${chapter.title}</a>`;
+                    chapterList.appendChild(chapterItem);
+                    
+                    if (content[chapter.id]) {
+                       contentContainer.insertAdjacentHTML('beforeend', content[chapter.id]);
+                    }
+                });
+
+                partElement.appendChild(partHeader);
+                partElement.appendChild(chapterList);
+                navMenu.appendChild(partElement);
+                
+                partHeader.addEventListener('click', () => {
+                    chapterList.classList.toggle('hidden');
+                    partHeader.querySelector('svg').classList.toggle('rotate-180');
+                });
+            });
+
+            // --- Initial State ---
+            function showContent(targetId) {
+                document.querySelectorAll('.content-section').forEach(section => {
+                    section.classList.add('hidden');
+                });
+                const targetSection = document.getElementById(targetId);
+                if (targetSection) {
+                    targetSection.classList.remove('hidden');
+                }
+                
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.classList.remove('active');
+                    if (link.dataset.target === targetId) {
+                        link.classList.add('active');
+                    }
+                });
+                window.scrollTo(0, 0);
+            }
+            
+            showContent(firstChapterId);
+
+            // --- Event Listeners ---
+            navMenu.addEventListener('click', (e) => {
+                if (e.target.matches('.nav-link')) {
+                    e.preventDefault();
+                    const targetId = e.target.dataset.target;
+                    showContent(targetId);
+                    if (window.innerWidth < 640) {
+                        sidebar.classList.add('-translate-x-full');
+                    }
+                }
+            });
+
+            sidebarToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('-translate-x-full');
+            });
+            
+            // --- Copy Code Functionality ---
+            contentContainer.addEventListener('click', function(e) {
+                if (e.target.classList.contains('copy-btn')) {
+                    const pre = e.target.previousElementSibling;
+                    const code = pre.querySelector('code');
+                    navigator.clipboard.writeText(code.innerText).then(() => {
+                        e.target.textContent = 'Copied!';
+                        setTimeout(() => {
+                            e.target.textContent = 'Copy';
+                        }, 2000);
+                    });
+                }
+            });
+
+            // --- Search Functionality ---
+            let originalContent = {};
+            searchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.trim().toLowerCase();
+                
+                document.querySelectorAll('.content-section').forEach(section => {
+                    if (!originalContent[section.id]) {
+                        originalContent[section.id] = section.innerHTML;
+                    }
+                    
+                    if (searchTerm === '') {
+                        section.innerHTML = originalContent[section.id];
+                        return;
+                    }
+
+                    const newHtml = highlightText(originalContent[section.id], searchTerm);
+                    section.innerHTML = newHtml;
+                });
+            });
+
+            function highlightText(html, term) {
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = html;
+                
+                const walker = document.createTreeWalker(tempDiv, NodeFilter.SHOW_TEXT, null, false);
+                let node;
+                const nodesToReplace = [];
+
+                while (node = walker.nextNode()) {
+                    if (node.parentElement.tagName.toLowerCase() === 'script' || node.parentElement.tagName.toLowerCase() === 'style') {
+                        continue;
+                    }
+                    const text = node.nodeValue;
+                    const regex = new RegExp(`(${escapeRegExp(term)})`, 'gi');
+                    if (regex.test(text)) {
+                        nodesToReplace.push({node, text, regex});
+                    }
+                }
+
+                nodesToReplace.forEach(({node, text, regex}) => {
+                    const newNode = document.createElement('span');
+                    newNode.innerHTML = text.replace(regex, '<mark>$1</mark>');
+                    node.parentNode.replaceChild(newNode, node);
+                });
+
+                return tempDiv.innerHTML;
+            }
+
+            function escapeRegExp(string) {
+                return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            }
+
+        });
+    </script>
+</body>
+</html>
